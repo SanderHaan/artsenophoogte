@@ -27,8 +27,8 @@ document.addEventListener("DOMContentLoaded", function () {
       <ul>
         <li>⛷️ 2012 – 2026</li>
         <li>🍻 Après-ski: ongecontroleerd</li>
-        <li>🏔️ Route Altijd richting Sölden</li>
-        <li>❄️ Valpartijen: niet publiekelijk gedocumenteerd</li>
+        <li>🏔️ Route: Altijd richting Sölden</li>
+        <li>❄️ Valpartijen: niet gedocumenteerd</li>
       </ul>
     </div>
 
