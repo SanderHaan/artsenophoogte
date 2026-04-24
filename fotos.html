@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Foto's – Artsen op Hoogte</title>
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+  <div class="logo-title">
+    <img src="logo.png" class="logo">
+    Artsen op hoogte
+  </div>
+
+ <nav>
+  <a href="index.html">Home</a>
+  <a href="agenda.html">Agenda</a>
+  <a href="artsen.html">Participerende artsen</a>
+  <a href="gastsprekers.html">Gastsprekers</a>
+  <a href="bestuur.html">Bestuur</a>
+  <a href="fotos.html" class="active">Foto's</a>
+</nav>
+</header>
+
+<main class="container">
+
+  <h1 class="page-title">Foto's</h1>
+
+  <!-- LOGIN -->
+  <div id="login">
+    <p>Voer het wachtwoord in om de foto's te bekijken:</p>
+    <input type="password" id="passwordInput" placeholder="Wachtwoord">
+    <button onclick="checkPassword()">Open</button>
+    <p id="error" style="color:red;"></p>
+  </div>
+
+  <!-- GALLERY -->
+  <div id="gallery" style="display:none;">
+    <h2>A dirty mind is a joy forever 😊</h2>
+    <div id="photos"></div>
+<!-- LIGHTBOX -->
+  <div id="lightbox" class="lightbox">
+  <span class="close" onclick="closeLightbox()">&times;</span>
+  <img class="lightbox-content" id="lightbox-img">
+  <div class="nav prev" onclick="prevPhoto()">❮</div>
+  <div class="nav next" onclick="nextPhoto()">❯</div>
+  </div>
+  </div>
+
+</main>
+
+<script>
+let currentIndex = 0;
+let photoList = [];
+
+/* wachtwoord */
+function checkPassword() {
+  var password = document.getElementById("passwordInput").value;
+  var correctPassword = "tepelkwastjes";
+
+  if (password === correctPassword) {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("gallery").style.display = "block";
+    loadPhotos();
+  } else {
+    document.getElementById("error").innerText = "Onjuist wachtwoord";
+  }
+}
+
+/* foto's laden */
+function loadPhotos() {
+  fetch("fotos.json")
+    .then(response => response.json())
+    .then(files => {
+
+      files.reverse(); // nieuwste eerst
+      photoList = files;
+
+      const container = document.getElementById("photos");
+
+      files.forEach((file, index) => {
+        const img = document.createElement("img");
+        img.src = file;
+        img.onclick = () => openLightbox(index);
+        container.appendChild(img);
+      });
+    });
+}
+
+/* lightbox openen */
+function openLightbox(index) {
+  currentIndex = index;
+  document.getElementById("lightbox").style.display = "flex";
+  document.getElementById("lightbox-img").src = photoList[currentIndex];
+}
+
+/* sluiten */
+function closeLightbox() {
+  document.getElementById("lightbox").style.display = "none";
+}
+
+/* volgende/vorige */
+function nextPhoto() {
+  currentIndex = (currentIndex + 1) % photoList.length;
+  openLightbox(currentIndex);
+}
+
+function prevPhoto() {
+  currentIndex = (currentIndex - 1 + photoList.length) % photoList.length;
+  openLightbox(currentIndex);
+}
+
+/* toetsenbord support */
+document.addEventListener("keydown", function(e) {
+  if (document.getElementById("lightbox").style.display === "flex") {
+    if (e.key === "ArrowRight") nextPhoto();
+    if (e.key === "ArrowLeft") prevPhoto();
+    if (e.key === "Escape") closeLightbox();
+  }
+});
+
+/* swipe mobiel */
+let touchStartX = 0;
+
+document.getElementById("lightbox").addEventListener("touchstart", e => {
+  touchStartX = e.changedTouches[0].screenX;
+});
+
+document.getElementById("lightbox").addEventListener("touchend", e => {
+  let diff = e.changedTouches[0].screenX - touchStartX;
+  if (diff > 50) prevPhoto();
+  if (diff < -50) nextPhoto();
+});
+</script>
+<script src="footer.js"></script>
+
+</body>
+</html>
